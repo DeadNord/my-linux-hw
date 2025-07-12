@@ -1,0 +1,22 @@
+image:
+  repository: <ECR_URL_PLACEHOLDER>
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+resources: {}   # обмеження CPU / RAM за потреби
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+env:            # сюди перенесіть змінні з теми 4
+  DJANGO_SETTINGS_MODULE: "core.settings.prod"
+  DEBUG: "False"
+

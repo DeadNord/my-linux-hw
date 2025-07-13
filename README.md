@@ -27,4 +27,8 @@ terraform plan
 terraform apply
 
 terraform destroy
+
+cd ../
+
+bash purge-and-delete-s3.sh hw-5-terraform eu-central-1
 ```

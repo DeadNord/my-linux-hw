@@ -13,8 +13,10 @@ aws dynamodb create-table \
     --billing-mode PAY_PER_REQUEST \
     --region eu-central-1
 
-
-terraform init
+cd ./src
+# terraform init
+terraform init -migrate-state
+terraform init -reconfigure
 
 terraform import module.s3_backend.aws_s3_bucket.this  hw-5-terraform
 terraform import module.s3_backend.aws_dynamodb_table.this terraform-locks

@@ -1,12 +1,11 @@
 terraform {
   required_version = ">= 1.6.0"
-  backend "local" {}
 
   backend "s3" {
-    bucket         = var.backend_bucket # ← вкажіть свій бакет
+    bucket         = "hw-5-terraform" # ← ваше ім’я бакета
     key            = "lesson-5/terraform.tfstate"
-    region         = var.aws_region
-    dynamodb_table = var.backend_dynamodb_table
+    region         = "eu-central-1"
+    dynamodb_table = "terraform-locks"
     encrypt        = true
   }
 }

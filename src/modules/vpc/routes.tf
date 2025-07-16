@@ -1,13 +1,17 @@
 #########################################
-# Публічний маршрут (IGW)
+# Public route table
 #########################################
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.this.id
   }
-  tags = { Name = "${var.vpc_name}-public-rt" }
+
+  tags = {
+    Name = "${var.vpc_name}-public-rt"
+  }
 }
 
 resource "aws_route_table_association" "public" {
@@ -17,22 +21,27 @@ resource "aws_route_table_association" "public" {
 }
 
 #########################################
-# Приватні маршрути (NAT GW)
+# Private route tables (NAT)
 #########################################
 resource "aws_route_table" "private" {
-  count  = length(var.availability_zones) # 3 RT — по AZ
+  count  = length(var.availability_zones)
   vpc_id = aws_vpc.this.id
+
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.this.id
   }
-  tags = { Name = "${var.vpc_name}-private-rt-${count.index + 1}" }
+
+  tags = {
+    Name = "${var.vpc_name}-private-rt-${count.index + 1}"
+  }
 }
 
 resource "aws_route_table_association" "private" {
   count     = length(var.private_subnets)
   subnet_id = aws_subnet.private[count.index].id
-  # Распределяем приватные подсети между N приватных RT (по AZ)
+
+  # распределяем приватные подсети по маршрутизаторам (по кругу)
   route_table_id = element(
     aws_route_table.private[*].id,
     count.index % length(var.availability_zones)

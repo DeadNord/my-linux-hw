@@ -1,3 +1,7 @@
+#########################################
+# Root: подключаем готовые модули
+#########################################
+
 module "s3_backend" {
   source      = "./modules/s3-backend"
   bucket_name = var.backend_bucket
@@ -14,8 +18,7 @@ module "vpc" {
 }
 
 module "ecr" {
-  source = "./modules/ecr"
-
+  source          = "./modules/ecr"
   repository_name = "${var.project}-django"
   scan_on_push    = true
 }

@@ -2,15 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "django-app.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "django-app.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.autoscaling.minReplicas }}
+  replicas: {{ .Values.autoscaling.minReplicas | default 2 }}
   selector:
     matchLabels:
-      app: {{ include "django-app.name" . }}
+      app.kubernetes.io/name: {{ include "django-app.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "django-app.name" . }}
+        app.kubernetes.io/name: {{ include "django-app.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
         - name: django
@@ -21,3 +26,4 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "django-app.fullname" . }}-config
+          resources: {{- toYaml .Values.resources | nindent 12 }}

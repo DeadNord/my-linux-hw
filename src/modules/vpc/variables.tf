@@ -1,33 +1,32 @@
 variable "vpc_cidr_block" {
-  description = "CIDR-блок VPC"
+  description = "CIDR VPC"
   type        = string
 }
 
 variable "public_subnets" {
-  description = "Три CIDR-блоки для публічних підмереж"
+  description = "CIDR блоки public подсетей"
   type        = list(string)
 }
 
 variable "private_subnets" {
-  description = "Три CIDR-блоки для приватних підмереж"
+  description = "CIDR блоки private подсетей"
   type        = list(string)
 }
 
 variable "availability_zones" {
-  description = "Три AZ того самого реґіону"
+  description = "AZs (одна на каждую подсеть)"
   type        = list(string)
 }
 
 variable "vpc_name" {
-  description = "Base name for all resources"
+  description = "Base name prefix"
   type        = string
 }
 
-/*  optional  */
 variable "nat_eip_allocation_id" {
   description = <<-EOT
-    Існуючий Allocation ID Elastic IP для NAT-Gateway.
-    Якщо порожній ("", default) – модуль створить новий EIP.
+  Существующий Allocation ID EIP для NAT Gateway.
+  Оставьте пусто, чтобы модуль создал EIP сам.
   EOT
   type        = string
   default     = ""

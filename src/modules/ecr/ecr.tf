@@ -9,4 +9,9 @@ resource "aws_ecr_repository" "this" {
   lifecycle {
     prevent_destroy = true
   }
+
+  tags = {
+    Name      = var.repository_name
+    Terraform = "true"
+  }
 }

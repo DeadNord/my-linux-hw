@@ -1,11 +1,14 @@
 #########################################
-# VPC  +  підмережі  +  IGW
+# VPC + Subnets + IGW
 #########################################
+
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_support   = true
   enable_dns_hostnames = true
-  tags                 = { Name = "${var.vpc_name}-vpc" }
+  tags = {
+    Name = "${var.vpc_name}-vpc"
+  }
 }
 
 resource "aws_subnet" "public" {
@@ -33,31 +36,35 @@ resource "aws_subnet" "private" {
 
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
-  tags   = { Name = "${var.vpc_name}-igw" }
+  tags = {
+    Name = "${var.vpc_name}-igw"
+  }
 }
 
 #########################################
-# NAT Gateway — один на VPC
+# NAT Gateway (один на VPC)
 #########################################
 
-# 0 ✔  створюємо EIP, якщо ID не передано
+# создаём EIP при необходимости
 resource "aws_eip" "nat" {
   count  = var.nat_eip_allocation_id == "" ? 1 : 0
   domain = "vpc"
-  tags   = { Name = "${var.vpc_name}-nat-eip" }
+  tags = {
+    Name = "${var.vpc_name}-nat-eip"
+  }
 }
 
-# 1 ✔  визначаємо Allocation ID (створений або існуючий)
 locals {
-  # якщо передано готовий Allocation ID → використовуємо його
-  # інакше — беремо ID EIP, який модуль щойно створить (count = 1)
-  nat_allocation_id = var.nat_eip_allocation_id != "" ? var.nat_eip_allocation_id : aws_eip.nat[0].id
+  # если var.nat_eip_allocation_id не пуст — используем его,
+  # иначе берём созданный EIP (если есть)
+  nat_allocation_id = var.nat_eip_allocation_id != "" ? var.nat_eip_allocation_id : try(aws_eip.nat[0].id, null)
 }
-
 
 resource "aws_nat_gateway" "this" {
   allocation_id = local.nat_allocation_id
-  subnet_id     = aws_subnet.public[0].id # перша public-subnet
-  tags          = { Name = "${var.vpc_name}-nat" }
+  subnet_id     = aws_subnet.public[0].id
   depends_on    = [aws_internet_gateway.this]
+  tags = {
+    Name = "${var.vpc_name}-nat"
+  }
 }

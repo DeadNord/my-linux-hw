@@ -8,7 +8,7 @@ service:
   port: 80
   targetPort: 8000
 
-resources: {}   # обмеження CPU / RAM за потреби
+resources: {}
 
 autoscaling:
   enabled: true
@@ -16,7 +16,19 @@ autoscaling:
   maxReplicas: 6
   targetCPUUtilizationPercentage: 70
 
-env:            # сюди перенесіть змінні з теми 4
+env:
   DJANGO_SETTINGS_MODULE: "core.settings.prod"
   DEBUG: "False"
 
+# Бонус (Ingress) — выключено по умолчанию
+ingress:
+  enabled: false
+  className: nginx
+  host: yourdomain.com
+  path: /
+  pathType: Prefix
+  tls: false
+  annotations: {}
+  # пример:
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-prod

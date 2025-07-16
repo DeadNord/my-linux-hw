@@ -1,32 +1,35 @@
-# pull official base image
-FROM python:3.11.4-slim-buster
+FROM python:3.11-slim-bullseye
 
-# Set the working directory inside the container
+# Переменные окружения для Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
 WORKDIR /usr/src/app
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Install necessary dependencies for SSH and Git
+# Системные зависимости (минимум; добавьте при необходимости)
+# build-essential и libpq-dev полезны, если psycopg2 или др. нативные пакеты
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    openssh-client \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Create .ssh directory and set permissions
-RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+# Установим зависимости Python по requirements.txt
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --upgrade pip
-COPY requirements.txt ./
-RUN pip install -r requirements.txt
-
-# Copy the rest of the project's code into the container
+# Копируем весь код проекта
 COPY . .
 
-# Collect static files for Django
-RUN python ./manage.py collectstatic --noinput
+# Создадим непривилегированного пользователя
+RUN useradd -m django && chown -R django:django /usr/src/app
+USER django
 
-# Command to run the application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--log-level", "debug", "config.wsgi:application"]
+# Порт, на котором слушает gunicorn
+EXPOSE 8000
+
+# ВАЖНО: DJANGO_SETTINGS_MODULE и другие env вы передаёте через Kubernetes ConfigMap!
+# Поэтому здесь они не жёстко заданы.
+
+# Запуск
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]

@@ -1,6 +1,5 @@
 module "s3_backend" {
   source = "./modules/s3-backend"
-  create = false
 }
 
 module "vpc" {

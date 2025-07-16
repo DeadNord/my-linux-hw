@@ -17,8 +17,13 @@ autoscaling:
   targetCPUUtilizationPercentage: 70
 
 env:
-  DJANGO_SETTINGS_MODULE: "core.settings.prod"
+  DJANGO_SETTINGS_MODULE: "config.settings"
   DEBUG: "False"
+  ALLOWED_HOSTS: "*"
+  CORS_ALLOWED_ORIGINS: "*"
+  RATE_LIMITING: "100/hour"
+  DJANGO_SECRET_KEY: "test-key"
+  DJANGO_ALLOWED_HOSTS: "*"
 
 # Бонус (Ingress) — выключено по умолчанию
 ingress:

@@ -28,7 +28,7 @@ BASE_DIR: Path = Path(__file__).resolve().parent.parent
 PYTHON_ENV: str = env.str("PYTHON_ENV", "development")
 DEBUG: bool = PYTHON_ENV == "development"
 
-SECRET_KEY: str = env.str("DJANGO_SECRET_KEY", "⚠️  change‑me‑in‑production ⚠️")
+SECRET_KEY: str = env.str("DJANGO_SECRET_KEY", "test-secret-key")
 
 ALLOWED_HOSTS: list[str] = env.list(
     "DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"]

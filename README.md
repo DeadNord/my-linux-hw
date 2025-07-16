@@ -34,20 +34,24 @@ terraform output -raw cluster_name
 ECR_URL=$(terraform output -raw ecr_repository_url)
 EKS_CLUSTER=$(terraform output -raw cluster_name)
 REGION=eu-central-1
-
+PRINCIPAL_ARN=$(aws sts get-caller-identity --query Arn --output text)
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
 aws ecr get-login-password --region "${REGION}" \
   | docker login --username AWS --password-stdin "${ECR_URL}"
-docker build -t lesson-7-django:latest ./app
+docker build -t lesson-7-django:latest ../app
 docker tag lesson-7-django:latest "${ECR_URL}:latest"
 docker push "${ECR_URL}:latest"
 
-helm upgrade --install django-app ./src/charts/django-app \
+helm template django-app ./charts/django-app \
+  --set image.repository="${ECR_URL}" \
+  --set image.tag=latest | less
+
+helm upgrade --install django-app ./charts/django-app \
   --set image.repository="${ECR_URL}" \
   --set image.tag=latest
 
 kubectl get pods
-kubectl get svc django-app
 kubectl get hpa
 
 POD=$(kubectl get pods -l app.kubernetes.io/name=django-app -o jsonpath='{.items[0].metadata.name}')

@@ -1,2 +1,11 @@
-output "bucket"         { value = aws_s3_bucket.tf_state.id }
-output "dynamodb_table" { value = aws_dynamodb_table.tf_lock.id }
+output "bucket_id" {
+  value = aws_s3_bucket.this.id
+}
+
+output "bucket_arn" {
+  value = aws_s3_bucket.this.arn
+}
+
+output "dynamodb_table_name" {
+  value = aws_dynamodb_table.this.name
+}

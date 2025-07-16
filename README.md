@@ -20,7 +20,7 @@ cd ./src
 terraform init -migrate-state
 terraform init -reconfigure
 
-terraform import module.s3_backend.aws_s3_bucket.this  hw-7-terraform
+terraform import module.s3_backend.aws_s3_bucket.this hw-7-terraform
 terraform import module.s3_backend.aws_dynamodb_table.this hw-7-terraform-locks
 
 terraform state list | grep module.s3_backend

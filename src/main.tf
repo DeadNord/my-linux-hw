@@ -32,3 +32,11 @@ module "eks" {
   private_subnet_ids = module.vpc.private_subnet_ids
   public_subnet_ids  = module.vpc.public_subnet_ids
 }
+
+module "jenkins" {
+  source = "./modules/jenkins"
+}
+
+module "argo_cd" {
+  source = "./modules/argo_cd"
+}

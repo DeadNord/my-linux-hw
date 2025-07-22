@@ -20,7 +20,17 @@ aws dynamodb create-table \
 
 ```bash
 cd ./src
-terraform init
+
+terraform init -migrate-state
+terraform init -reconfigure
+
+terraform import module.s3_backend.aws_s3_bucket.this hw-8-9-terraform
+terraform import module.s3_backend.aws_dynamodb_table.this hw-8-9-terraform-locks
+
+terraform state list | grep module.s3_backend
+```
+```bash
+# terraform init
 terraform validate
 terraform plan
 terraform apply --auto-approve

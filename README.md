@@ -23,7 +23,7 @@ cd ./src
 terraform init
 terraform validate
 terraform plan
-terraform apply
+terraform apply --auto-approve
 ```
 
 Infrastructure includes ECR, EKS cluster, Jenkins and Argo CD installed via Helm charts.

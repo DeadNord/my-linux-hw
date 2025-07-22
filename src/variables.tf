@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "project" {
   type    = string
-  default = "lesson-7"
+  default = "lesson-8-9"
 }
 
 variable "backend_bucket" {

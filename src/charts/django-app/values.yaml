@@ -24,16 +24,3 @@ env:
   RATE_LIMITING: "100/hour"
   DJANGO_SECRET_KEY: "test-key"
   DJANGO_ALLOWED_HOSTS: "*"
-
-# Бонус (Ingress) — выключено по умолчанию
-ingress:
-  enabled: false
-  className: nginx
-  host: yourdomain.com
-  path: /
-  pathType: Prefix
-  tls: false
-  annotations: {}
-  # пример:
-  # annotations:
-  #   cert-manager.io/cluster-issuer: letsencrypt-prod

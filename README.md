@@ -2,11 +2,27 @@
 
 This project demonstrates a simple CI/CD chain with **Terraform**, **Jenkins** and **Argo CD**.
 
+```bash
+aws s3api create-bucket \
+    --bucket hw-8-9-terraform \
+    --region eu-central-1 \
+    --create-bucket-configuration LocationConstraint=eu-central-1
+
+aws dynamodb create-table \
+    --table-name hw-8-9-terraform-locks \
+    --attribute-definitions AttributeName=LockID,AttributeType=S \
+    --key-schema            AttributeName=LockID,KeyType=HASH \
+    --billing-mode PAY_PER_REQUEST \
+    --region eu-central-1
+```
+
 ## Terraform usage
 
 ```bash
 cd ./src
 terraform init
+terraform validate
+terraform plan
 terraform apply
 ```
 

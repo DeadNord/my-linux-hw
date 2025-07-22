@@ -29,6 +29,7 @@ terraform import module.s3_backend.aws_dynamodb_table.this hw-8-9-terraform-lock
 
 terraform state list | grep module.s3_backend
 ```
+
 ```bash
 # terraform init
 terraform validate
@@ -48,6 +49,12 @@ Infrastructure includes ECR, EKS cluster, Jenkins and Argo CD installed via Helm
 
 After applying Terraform open Jenkins (service `jenkins` in namespace `jenkins`) and run the pipeline.
 
+```bash
+kubectl -n jenkins port-forward svc/jenkins 8081:8080
+
+kubectl -n jenkins get secret jenkins -o jsonpath='{.data.jenkins-admin-password}' | base64 -d
+```
+
 ## Argo CD
 
 Argo CD watches the Helm chart and automatically deploys new revisions into the cluster. Use port-forward to access the UI:
@@ -62,4 +69,8 @@ Login with the password from:
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
 ```
 
-Once the Jenkins pipeline updates the chart, Argo CD will sync the application.
+## Kubernetes
+
+```bash
+kubectl -n django get pods
+```

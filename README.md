@@ -14,7 +14,7 @@ aws dynamodb create-table \
     --region eu-central-1
 
 cd ./src
-# terraform init
+
 terraform init -migrate-state
 terraform init -reconfigure
 
@@ -56,30 +56,6 @@ kubectl get hpa
 
 POD=$(kubectl get pods -l app.kubernetes.io/name=django-app -o jsonpath='{.items[0].metadata.name}')
 kubectl exec -it "$POD" -- env | grep DJANGO
-
-# helm uninstall django-app || true
-# kubectl get svc | grep django || echo "svc удалён"
-# aws elb describe-load-balancers --region $REGION --output text | grep -i lesson-7 || true
-# aws elbv2 describe-load-balancers --region $REGION --output text | grep -i lesson-7 || true
-
-# terraform destroy -target=module.eks -auto-approve
-# aws ec2 describe-instances \
-#   --filters "Name=tag:kubernetes.io/cluster/lesson-7-cluster,Values=owned" \
-#   --query 'Reservations[].Instances[].InstanceId' \
-#   --region $REGION
-
-# aws ec2 describe-nat-gateways \
-# --filter Name=vpc-id,Values=$(terraform output -raw vpc_id 2>/dev/null || echo none) \
-# --region $REGION \
-# --query 'NatGateways[].NatGatewayId'
-# aws ec2 delete-nat-gateway --nat-gateway-id nat-XXXXX --region $REGION
-
-
-# aws ec2 describe-addresses --region $REGION --query 'Addresses[].{Alloc:AllocationId,Assoc:AssociationId,PublicIp:PublicIp}'
-# aws ec2 disassociate-address --association-id eipassoc-XXXX --region $REGION
-# aws ec2 release-address --allocation-id eipalloc-XXXX --region $REGION
-
-# terraform destroy -target=module.vpc -auto-approve
 
 ECR_REPO=lesson-7-django
 aws ecr delete-repository --repository-name $ECR_REPO --force --region $REGION

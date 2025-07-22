@@ -36,7 +36,6 @@ module "eks" {
 module "jenkins" {
   source = "./modules/jenkins"
 }
-
 module "argo_cd" {
   source = "./modules/argo_cd"
 }

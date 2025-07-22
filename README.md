@@ -15,6 +15,7 @@ Infrastructure includes ECR, EKS cluster, Jenkins and Argo CD installed via Helm
 ## Jenkins pipeline
 
 `Jenkinsfile` contains a pipeline which:
+
 1. Builds a Docker image for the Django application.
 2. Pushes the image to ECR.
 3. Updates the image tag in the Helm chart and pushes changes to `main`.

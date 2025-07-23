@@ -1,28 +1,72 @@
 pipeline {
-  agent any
-  environment {
-    REGION = 'eu-central-1'
-    ECR_URL = "${ECR_URL}"
+  agent {
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    some-label: jenkins-kaniko
+spec:
+  serviceAccountName: jenkins-sa
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:v1.16.0-debug
+      imagePullPolicy: Always
+      command:
+        - sleep
+      args:
+        - 99d
+"""
+    }
   }
+
+  environment {
+    ECR_REGISTRY = "804054839611.dkr.ecr.eu-central-1.amazonaws.com"
+    IMAGE_NAME   = "ecr-repo-18062025214500"
+    IMAGE_TAG    = "v1.0.${BUILD_NUMBER}"
+
+    COMMIT_EMAIL = "jenkins@localhost"
+    COMMIT_NAME  = "jenkins"
+  }
+
   stages {
-    stage('Build image') {
+    stage('Build & Push Docker Image') {
       steps {
-        sh 'docker build -t $ECR_URL:$GIT_COMMIT app'
+        container('kaniko') {
+          sh '''
+            /kaniko/executor \\
+              --context `pwd` \\
+              --dockerfile `pwd`/Dockerfile \\
+              --destination=$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG \\
+              --cache=true \\
+              --insecure \\
+              --skip-tls-verify
+          '''
+        }
       }
     }
-    stage('Push to ECR') {
+
+    stage('Update Chart Tag in Git') {
       steps {
-        sh '''aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URL
-        docker push $ECR_URL:$GIT_COMMIT'''
-      }
-    }
-    stage('Update chart') {
-      steps {
-        sh "sed -i 's/tag: \".*\"/tag: \"$GIT_COMMIT\"/' src/charts/django-app/values.yaml"
-        sh 'git config user.email "jenkins@example.com"'
-        sh 'git config user.name "jenkins"'
-        sh 'git commit -am "Update image tag"'
-        sh 'git push origin $GIT_BRANCH'
+        container('git') {
+          withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: ${github_user}, passwordVariable: ${github_pat}, gitBranch: ${github_branch}, gitRepoName: ${github_repo_name})]) {
+            sh '''
+              git clone https://${github_user}:${github_pat}@github.com/${github_user}/${github_repo_name}.git
+              git checkout -b ${github_branch}
+              cd ${github_repo_name}/charts/django-app
+
+              sed -i "s/tag: .*/tag: $IMAGE_TAG/" values.yaml
+
+              git config user.email "$COMMIT_EMAIL"
+              git config user.name "$COMMIT_NAME"
+
+              git add values.yaml
+              git commit -m "Update image tag to $IMAGE_TAG"
+              git push origin ${github_branch}
+            '''
+          }
+        }
       }
     }
   }

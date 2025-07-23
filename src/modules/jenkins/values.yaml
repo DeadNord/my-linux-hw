@@ -1,5 +1,0 @@
-controller:
-  installPlugins:
-    - kubernetes:latest
-    - workflow-aggregator:latest
-  serviceType: LoadBalancer

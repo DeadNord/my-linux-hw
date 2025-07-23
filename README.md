@@ -1,76 +1,101 @@
-# Lesson-8-9 CI/CD
+# Steps
 
-This project demonstrates a simple CI/CD chain with **Terraform**, **Jenkins** and **Argo CD**.
+!!! Make sure you have installed `Terraform` and `Helm` on your system.
+
+## Terraform
+
+Ініціалізація Terraform:
 
 ```bash
-aws s3api create-bucket \
-    --bucket hw-8-9-terraform \
-    --region eu-central-1 \
-    --create-bucket-configuration LocationConstraint=eu-central-1
-
-aws dynamodb create-table \
-    --table-name hw-8-9-terraform-locks \
-    --attribute-definitions AttributeName=LockID,AttributeType=S \
-    --key-schema            AttributeName=LockID,KeyType=HASH \
-    --billing-mode PAY_PER_REQUEST \
-    --region eu-central-1
+terraform init
 ```
 
-## Terraform usage
+Перевірка змін:
 
 ```bash
-cd ./src
-
-terraform init -migrate-state
-terraform init -reconfigure
-
-terraform import module.s3_backend.aws_s3_bucket.this hw-8-9-terraform
-terraform import module.s3_backend.aws_dynamodb_table.this hw-8-9-terraform-locks
-
-terraform state list | grep module.s3_backend
-```
-
-```bash
-# terraform init
-terraform validate
 terraform plan
-terraform apply --auto-approve
 ```
 
-Infrastructure includes ECR, EKS cluster, Jenkins and Argo CD installed via Helm charts.
-
-## Jenkins pipeline
-
-`Jenkinsfile` contains a pipeline which:
-
-1. Builds a Docker image for the Django application.
-2. Pushes the image to ECR.
-3. Updates the image tag in the Helm chart and pushes changes to `main`.
-
-After applying Terraform open Jenkins (service `jenkins` in namespace `jenkins`) and run the pipeline.
+Застосування змін:
 
 ```bash
-kubectl -n jenkins port-forward svc/jenkins 8081:8080
-
-kubectl -n jenkins get secret jenkins -o jsonpath='{.data.jenkins-admin-password}' | base64 -d
+terraform apply
 ```
 
-## Argo CD
-
-Argo CD watches the Helm chart and automatically deploys new revisions into the cluster. Use port-forward to access the UI:
+Завантажити django image на новостворений ECR-репозиторій:
 
 ```bash
-kubectl -n argocd port-forward svc/argocd-server 8080:443
+docker tag django_image:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 ```
 
-Login with the password from:
+where `django_image:latest` your django image name that already exists in your local machine.
+
+Replace $AWS_ACCOUNT_ID, $AWS_REGION, and $ECR_REPOSITORY with your own values.
+
+## Helm
+
+Застосування Helm:
 
 ```bash
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+cd charts/django-app
+helm install my-django .
 ```
 
-## Kubernetes
+where `my-django` is your helm chart name.
+
+# Видалення ресурсів:
+
+Kubernetes (PODs, Services, Deployments etc.)
 
 ```bash
-kubectl -n django get pods
+helm uninstall my-django
 ```
+
+where `my-django` is your helm chart name.
+
+Terraform (EKS, VPC, ECR etc.)
+
+```bash
+terraform destroy
+```
+
+# Додаткова інформація:
+
+Якщо ви хочете оновити helm chart:
+
+```bash
+helm upgrade my-django .
+```
+
+Якщо ви хочете оновити terraform:
+
+```bash
+terraform init -upgrade
+terraform plan
+terraform apply
+```
+
+# Опис модулів terraform
+
+## s3-backend
+
+Модуль для створення S3-бакета для збереження стейтів.
+В модулі створюється S3-бакет, налаштовується версіонування та контроль власності.
+Також створюється DynamoDB-таблиця для блокування стейтів.
+
+## vpc
+
+Модуль для створення VPC.
+В модулі встановлена VPC, публічні підмережі, приватні підмережі та зони доступності.
+Також створюється NAT Gateway, Internet Gateway та таблиці роутів для доступу до інтернету.
+
+## ecr
+
+Модуль для створення ECR-репозиторію.
+В модулі створюється репозиторій ECR, налаштовується автоматичне сканування security-вразливостей під час push.
+
+## eks
+
+Модуль для створення EKS-кластера.
+В модулі створюється EKS-кластер, налаштовується автоматичне сканування security-вразливостей під час push.

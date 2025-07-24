@@ -19,7 +19,7 @@ terraform plan
 Застосування змін:
 
 ```bash
-terraform apply
+terraform apply --auto-approve
 ```
 
 Завантажити django image на новостворений ECR-репозиторій:

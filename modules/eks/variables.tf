@@ -5,7 +5,7 @@ variable "region" {
 
 variable "cluster_name" {
   description = "Name of the EKS cluster"
-  default     = "example-eks-cluster-alex"
+  default     = "example-eks-cluster-hw-9"
 }
 
 variable "subnet_ids" {
@@ -15,7 +15,7 @@ variable "subnet_ids" {
 
 variable "node_group_name" {
   description = "Name of the node group"
-  default     = "node-group-alex"
+  default     = "node-group-hw-9"
 }
 
 variable "instance_type" {

@@ -45,7 +45,7 @@ Replace $AWS_ACCOUNT_ID, $AWS_REGION, and $ECR_REPOSITORY with your own values.
 ## Kubernetes
 
 ```bash
-aws eks update-kubeconfig --region eu-central-1 --name eks-cluster-alex
+aws eks update-kubeconfig --region eu-central-1 --name eks-cluster-hw-9
 kubectl get nodes
 kubectl cluster-info
 ```

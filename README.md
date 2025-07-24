@@ -61,14 +61,29 @@ helm install my-django .
 
 where `my-django` is your helm chart name.
 
+## Jenkins
+
+```bash
+# Check password
+kubectl -n jenkins get secret jenkins \
+  -o jsonpath='{.data.jenkins-admin-password}' | base64 -d; echo
+
+# Check Jenkins UI
+kubectl -n jenkins port-forward svc/jenkins 8081:8080
+```
+
 ## Argo CD
 
 ```bash
+# Check password
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath='{.data.password}' | base64 -d; echo
 
 kubectl -n argocd port-forward svc/argo-cd-argocd-server 8080:443
 kubectl -n argocd get svc
+
+# Check Argo CD UI
+xdg-open "https://$(kubectl -n argocd get svc argo-cd-argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 ```
 
 # Видалення ресурсів:
@@ -84,7 +99,7 @@ where `my-django` is your helm chart name.
 Terraform (EKS, VPC, ECR etc.)
 
 ```bash
-terraform destroy
+terraform destroy --auto-approve
 ```
 
 # Додаткова інформація:

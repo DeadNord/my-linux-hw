@@ -33,19 +33,19 @@ export ECR_REPOSITORY=${REPO_URL##*/}
 aws ecr get-login-password --region $AWS_REGION \
 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-docker build -t django-hw-9:latest ./app
-docker tag django-hw-9:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+docker build -t django-hw-10:latest ./app
+docker tag django-hw-10:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 ```
 
-where `django-hw-9:latest` your django image name that already exists in your local machine.
+where `django-hw-10:latest` your django image name that already exists in your local machine.
 
 Replace $AWS_ACCOUNT_ID, $AWS_REGION, and $ECR_REPOSITORY with your own values.
 
 ## Kubernetes
 
 ```bash
-aws eks update-kubeconfig --region eu-central-1 --name eks-cluster-hw-9
+aws eks update-kubeconfig --region eu-central-1 --name eks-cluster-hw-10
 kubectl get nodes
 kubectl cluster-info
 ```

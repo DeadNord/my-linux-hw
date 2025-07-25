@@ -1,68 +1,109 @@
 variable "name" {
-  description = "Base name for RDS resources"
+  description = "Назва інстансу або кластера"
   type        = string
-  default     = "db"
-}
-
-variable "use_aurora" {
-  description = "If true, create Aurora cluster instead of single RDS instance"
-  type        = bool
-  default     = false
 }
 
 variable "engine" {
-  description = "Database engine (postgres, mysql, aurora-postgresql, aurora-mysql)"
-  type        = string
-  default     = "postgres"
+  type    = string
+  default = "postgres"
+}
+variable "engine_cluster" {
+  type    = string
+  default = "aurora-postgresql"
+}
+variable "aurora_replica_count" {
+  type    = number
+  default = 1
 }
 
+variable "aurora_instance_count" {
+  type    = number
+  default = 2 # 1 primary + 1 replica
+}
 variable "engine_version" {
-  description = "Database engine version"
-  type        = string
-  default     = "15.3"
+  type    = string
+  default = "14.7"
 }
 
 variable "instance_class" {
-  description = "Instance class for DB instance or Aurora instances"
-  type        = string
-  default     = "db.t3.micro"
+  type    = string
+  default = "db.t3.medium"
 }
 
-variable "multi_az" {
-  description = "Enable Multi-AZ for RDS instance"
-  type        = bool
-  default     = false
+variable "allocated_storage" {
+  type    = number
+  default = 20
 }
 
 variable "db_name" {
-  description = "Initial database name"
-  type        = string
-  default     = "exampledb"
+  type = string
 }
 
 variable "username" {
-  description = "Master username"
-  type        = string
-  default     = "admin"
+  type = string
 }
 
 variable "password" {
-  description = "Master password"
-  type        = string
+  type      = string
+  sensitive = true
 }
 
 variable "vpc_id" {
-  description = "VPC ID for the database security group"
+  type = string
+}
+
+variable "subnet_private_ids" {
+  type = list(string)
+}
+
+variable "subnet_public_ids" {
+  type = list(string)
+}
+
+variable "publicly_accessible" {
+  type    = bool
+  default = false
+}
+
+variable "multi_az" {
+  type    = bool
+  default = false
+}
+
+variable "parameters" {
+  type    = map(string)
+  default = {}
+}
+
+variable "use_aurora" {
+  type    = bool
+  default = false
+}
+
+variable "backup_retention_period" {
+  type    = string
+  default = ""
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "parameter_group_family_aurora" {
+  type    = string
+  default = "aurora-postgresql15"
+}
+variable "engine_version_cluster" {
+  type    = string
+  default = "15.3"
+}
+variable "parameter_group_family_rds" {
+  type    = string
+  default = "postgres15"
+}
+
+variable "vpc_cidr_block" {
+  description = "CIDR блок для VPC"
   type        = string
-}
-
-variable "subnet_ids" {
-  description = "List of subnet IDs for DB subnet group"
-  type        = list(string)
-}
-
-variable "port" {
-  description = "Database port"
-  type        = number
-  default     = 5432
 }

@@ -13,6 +13,8 @@ terraform init
 Перевірка змін:
 
 ```bash
+terraform validate
+terraform fmt
 terraform plan
 ```
 

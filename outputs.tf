@@ -109,3 +109,25 @@ output "argocd_admin_password" {
   description = "Initial admin password"
   value       = module.argo_cd.admin_password
 }
+
+#-------------RDS-----------------
+
+output "rds_endpoint" {
+  description = "Database endpoint"
+  value       = module.rds.endpoint
+}
+
+output "rds_port" {
+  description = "Database port"
+  value       = module.rds.port
+}
+
+output "rds_security_group_id" {
+  description = "RDS security group ID"
+  value       = module.rds.security_group_id
+}
+
+output "rds_subnet_group_name" {
+  description = "RDS subnet group name"
+  value       = module.rds.subnet_group_name
+}

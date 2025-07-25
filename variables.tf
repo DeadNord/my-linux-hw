@@ -52,3 +52,62 @@ variable "github_repo_name" {
   description = "GitHub project name"
   type        = string
 }
+
+variable "rds_name" {
+  description = "Base name for RDS resources"
+  type        = string
+  default     = "db"
+}
+
+variable "rds_use_aurora" {
+  description = "Create Aurora cluster when true"
+  type        = bool
+  default     = false
+}
+
+variable "rds_engine" {
+  description = "Database engine"
+  type        = string
+  default     = "postgres"
+}
+
+variable "rds_engine_version" {
+  description = "Database engine version"
+  type        = string
+  default     = "15.3"
+}
+
+variable "rds_instance_class" {
+  description = "Instance class for DB"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "rds_multi_az" {
+  description = "Enable Multi-AZ for RDS instance"
+  type        = bool
+  default     = false
+}
+
+variable "rds_db_name" {
+  description = "Initial database name"
+  type        = string
+  default     = "exampledb"
+}
+
+variable "rds_username" {
+  description = "Master username"
+  type        = string
+  default     = "admin"
+}
+
+variable "rds_password" {
+  description = "Master password"
+  type        = string
+}
+
+variable "rds_port" {
+  description = "Database port"
+  type        = number
+  default     = 5432
+}

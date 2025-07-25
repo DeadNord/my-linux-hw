@@ -100,3 +100,21 @@ module "argo_cd" {
   chart_version = "5.46.4"
   depends_on    = [module.eks]
 }
+
+module "rds" {
+  source = "./modules/rds"
+
+  name       = var.rds_name
+  db_name    = var.rds_db_name
+  username   = var.rds_username
+  password   = var.rds_password
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  use_aurora     = var.rds_use_aurora
+  engine         = var.rds_engine
+  engine_version = var.rds_engine_version
+  instance_class = var.rds_instance_class
+  multi_az       = var.rds_multi_az
+  port           = var.rds_port
+}

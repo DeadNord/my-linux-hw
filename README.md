@@ -70,7 +70,10 @@ kubectl get all -n argocd
 kubectl get all -n monitoring
 ```
 
-where `my-django` is your helm chart name.
+![alt text](images/image.png)
+![alt text](image-1.png)
+
+where `django-app` is your helm chart name.
 
 ## Jenkins
 
@@ -80,7 +83,7 @@ kubectl -n jenkins get secret jenkins \
   -o jsonpath='{.data.jenkins-admin-password}' | base64 -d; echo
 
 # Check Jenkins UI
-kubectl -n jenkins port-forward svc/jenkins 8081:8080
+kubectl -n jenkins port-forward svc/jenkins 8081:80
 ```
 
 ## Argo CD
@@ -100,9 +103,14 @@ xdg-open "https://$(kubectl -n argocd get svc argo-cd-argocd-server -o jsonpath=
 # Grafana
 
 ```bash
-kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
+helm ls -n monitoring
 
-kubectl port-forward svc/grafana 3000:80 -n monitoring
+kubectl -n monitoring get secret kube-prometheus-stack-grafana \
+  -o jsonpath='{.data.admin-user}' | base64 -d; echo
+kubectl -n monitoring get secret kube-prometheus-stack-grafana \
+  -o jsonpath='{.data.admin-password}' | base64 -d; echo
+
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
 ```
 
 # Видалення ресурсів:
@@ -110,10 +118,10 @@ kubectl port-forward svc/grafana 3000:80 -n monitoring
 Kubernetes (PODs, Services, Deployments etc.)
 
 ```bash
-helm uninstall my-django
+helm uninstall django-app
 ```
 
-where `my-django` is your helm chart name.
+where `django-app` is your helm chart name.
 
 Terraform (EKS, VPC, ECR etc.)
 

@@ -33,7 +33,7 @@ variable "repository_name" {
 }
 
 variable "prometheus_name" {
-    type = string
+  type = string
 }
 
 // github credentials

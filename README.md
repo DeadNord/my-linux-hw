@@ -58,7 +58,8 @@ kubectl cluster-info
 
 ```bash
 cd charts/django-app
-helm install my-django .
+helm dependency build
+helm install django-app .
 ```
 
 # Перевірка ресурсів:

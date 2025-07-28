@@ -48,6 +48,12 @@ variable "password" {
   sensitive = true
 }
 
+variable "port" {
+  description = "Database port"
+  type        = number
+  default     = 5432
+}
+
 variable "vpc_id" {
   type = string
 }

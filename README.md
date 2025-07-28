@@ -35,19 +35,19 @@ export ECR_REPOSITORY=${REPO_URL##*/}
 aws ecr get-login-password --region $AWS_REGION \
 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-docker build -t django-hw-10:latest ./app
-docker tag django-hw-10:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+docker build -t django-devops-fp:latest ./app
+docker tag django-devops-fp:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
 ```
 
-where `django-hw-10:latest` your django image name that already exists in your local machine.
+where `django-devops-fp:latest` your django image name that already exists in your local machine.
 
 Replace $AWS_ACCOUNT_ID, $AWS_REGION, and $ECR_REPOSITORY with your own values.
 
 ## Kubernetes
 
 ```bash
-aws eks update-kubeconfig --region eu-central-1 --name eks-cluster-hw-10
+aws eks update-kubeconfig --region eu-central-1 --name eks-cluster-devops-fp
 kubectl get nodes
 kubectl cluster-info
 ```
@@ -59,6 +59,14 @@ kubectl cluster-info
 ```bash
 cd charts/django-app
 helm install my-django .
+```
+
+# Перевірка ресурсів:
+
+```bash
+kubectl get all -n jenkins
+kubectl get all -n argocd
+kubectl get all -n monitoring
 ```
 
 where `my-django` is your helm chart name.
@@ -86,6 +94,14 @@ kubectl -n argocd get svc
 
 # Check Argo CD UI
 xdg-open "https://$(kubectl -n argocd get svc argo-cd-argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+```
+
+# Grafana
+
+```bash
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
+
+kubectl port-forward svc/grafana 3000:80 -n monitoring
 ```
 
 # Видалення ресурсів:

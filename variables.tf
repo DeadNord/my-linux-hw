@@ -32,6 +32,10 @@ variable "repository_name" {
   default     = "ecr-repo-18062025214500"
 }
 
+variable "prometheus_name" {
+    type = string
+}
+
 // github credentials
 
 variable "github_pat" {

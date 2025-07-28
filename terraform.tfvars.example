@@ -1,12 +1,16 @@
-github_user         = "github_username"
-github_pat          = "github_personal_access_token"
-github_repo_url     = "https://github.com/<repo>.git"
-github_branch = lesson-10
-github_repo_name = devops
-project_name     = "django-hw-10-app"
+github_user      = "DeadNord"
+github_pat       = ""
+github_repo_url  = "https://github.com/DeadNord/my-linux-hw.git"
+github_branch    = "final-project"
+github_repo_name = "my-linux-hw"
+project_name     = "django-devops-fp-app"
+cluster_name     = "eks-cluster-devops-fp"
+vpc_name         = "vpc-devops-fp"
+repository_name  = "ecr-repo-devops-fp"
+prometheus_name  = "kube-prometheus-stack"
 
-rds_password = "password_for_rds_db"
-rds_publicly_accessible = true
-rds_use_aurora = true
-rds_multi_az = false
+rds_password                = ""
+rds_publicly_accessible     = true
+rds_use_aurora              = false
+rds_multi_az                = false
 rds_backup_retention_period = "0"

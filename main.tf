@@ -145,3 +145,11 @@ module "rds" {
     module.vpc
   ]
 }
+
+module "monitoring" {
+  source = "./modules/monitoring"
+  depends_on = [
+    module.eks
+  ]
+  prometheus_name = var.prometheus_name
+}
